@@ -1,0 +1,184 @@
+/* FileUploadForm.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .actionButtons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .actionButton {
+    flex: 1;
+  }
+  
+  .fileDropArea {
+    border: 2px dashed #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  
+  .fileDropArea.error {
+    border-color: rgba(239, 68, 68, 0.3);
+    background-color: rgba(239, 68, 68, 0.05);
+  }
+  
+  .fileDropArea.hasFile {
+    border-color: rgba(79, 70, 229, 0.3);
+    background-color: rgba(79, 70, 229, 0.05);
+  }
+  
+  .fileDropArea:hover:not(.error, .hasFile) {
+    border-color: rgba(79, 70, 229, 0.05);
+  }
+  
+  .fileIcon {
+    height: 3rem;
+    width: 3rem;
+    margin: 0 auto;
+    color: rgba(79, 70, 229, 0.7);
+  }
+  
+  .fileInfo {
+    color: #4b5563;
+  }
+  
+  .browseButton {
+    color: #4f46e5;
+    cursor: pointer;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .fileSizeInfo {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+  }
+  
+  .fileInput {
+    display: none;
+  }
+  
+  .filePreview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .filePreviewInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .fileIconContainer {
+    padding: 0.5rem;
+    background-color: rgba(79, 70, 229, 0.1);
+    border-radius: 0.375rem;
+  }
+  
+  .fileIconSmall {
+    height: 1.25rem;
+    width: 1.25rem;
+    color: #4f46e5;
+  }
+  
+  .fileName {
+    font-size: 0.875rem;
+    font-weight: 500;
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .fileSize {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  .errorMessage {
+    background-color: rgba(239, 68, 68, 0.05);
+    color: #b91c1c;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .errorIcon {
+    height: 1rem;
+    width: 1rem;
+  }
+  
+  .uploadButton {
+    width: 100%;
+  }
+  
+  .tipsContainer {
+    background-color: rgba(249, 250, 251, 0.05);
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+  
+  .tipsTitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .tipsList {
+    font-size: 0.75rem;
+    color: #4b5563;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .modalBase {
+    border: 1px solid #e5e7eb;
+    background-color: rgba(249, 250, 251, 0.05);
+  }
+  
+  .modalHeader {
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .modalFooter {
+    border-top: 1px solid #e5e7eb;
+  }
+
+  /* Add these styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    z-index: 1001;
+  }

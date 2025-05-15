@@ -7,62 +7,182 @@ import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { z } from "zod";
-import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
-import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
-import { Divider } from "@heroui/divider";
-import {
-  Mail,
-  Lock,
-  AlertCircle,
-  CheckCircle,
-  Eye,
-  EyeOff,
-} from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
 import { signUpSchema } from "@/schemas/signUpschema";
+
+// Add separate CSS styles instead of Tailwind classes
+const styles = {
+  formContainer: {
+    maxWidth: "450px",
+    margin: "0 auto",
+    padding: "2rem",
+    backgroundColor: "#ffffff",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
+  },
+  headerContainer: {
+    textAlign: "center",
+    marginBottom: "1.5rem"
+  },
+  heading: {
+    fontSize: "1.75rem",
+    fontWeight: "700",
+    color: "#1a202c",
+    marginBottom: "0.5rem"
+  },
+  subHeading: {
+    fontSize: "1rem",
+    color: "#4a5568"
+  },
+  errorAlert: {
+    marginBottom: "1rem",
+    padding: "0.75rem",
+    backgroundColor: "#FEF2F2",
+    color: "#B91C1C",
+    borderRadius: "6px",
+    display: "flex",
+    alignItems: "center"
+  },
+  formGroup: {
+    marginBottom: "1.25rem"
+  },
+  label: {
+    display: "block",
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.25rem"
+  },
+  inputWrapper: {
+    position: "relative"
+  },
+  iconLeft: {
+    position: "absolute",
+    top: "50%",
+    left: "0.75rem",
+    transform: "translateY(-50%)",
+    pointerEvents: "none",
+    color: "#9CA3AF"
+  },
+  input: {
+    width: "77%",
+    paddingLeft: "2.5rem",
+    paddingRight: "2.5rem",
+    paddingTop: "0.625rem",
+    paddingBottom: "0.625rem",
+    borderRadius: "6px",
+    border: "1px solid #D1D5DB",
+    fontSize: "1rem",
+    transition: "all 0.2s",
+    outline: "none"
+  },
+  inputFocus: {
+    borderColor: "#3B82F6",
+    boxShadow: "0 0 0 3px rgba(59, 130, 246, 0.25)"
+  },
+  toggleButton: {
+    position: "absolute",
+    top: "50%",
+    right: "0.75rem",
+    transform: "translateY(-50%)",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    color: "#9CA3AF"
+  },
+  errorMessage: {
+    marginTop: "0.25rem",
+    fontSize: "0.875rem",
+    color: "#DC2626"
+  },
+  termsContainer: {
+    display: "flex",
+    alignItems: "flex-start",
+    marginBottom: "1.25rem"
+  },
+  termsIcon: {
+    marginRight: "0.5rem",
+    marginTop: "0.125rem",
+    flexShrink: "0",
+    color: "#3B82F6"
+  },
+  termsText: {
+    fontSize: "0.875rem",
+    color: "#4B5563"
+  },
+  submitButton: {
+    width: "100%",
+    backgroundColor: "#2563EB",
+    color: "#ffffff",
+    fontWeight: "500",
+    padding: "0.625rem",
+    fontSize: "1rem",
+    borderRadius: "6px",
+    border: "none",
+    cursor: "pointer",
+    transition: "background-color 0.2s",
+    marginBottom: "1rem"
+  },
+  submitButtonHover: {
+    backgroundColor: "#1D4ED8"
+  },
+  submitButtonDisabled: {
+    opacity: "0.7",
+    cursor: "not-allowed"
+  },
+  footer: {
+    marginTop: "1.5rem",
+    textAlign: "center",
+    fontSize: "0.875rem",
+    color: "#4B5563"
+  },
+  link: {
+    fontWeight: "500",
+    color: "#2563EB",
+    textDecoration: "none"
+  },
+  linkHover: {
+    color: "#1D4ED8",
+    textDecoration: "underline"
+  }
+};
 
 export default function SignUpForm() {
   const router = useRouter();
   const { signUp, isLoaded, setActive } = useSignUp();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [verifying, setVerifying] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
-  const [verificationError, setVerificationError] = useState<string | null>(
-    null
-  );
+  const [authError, setAuthError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  // State for input focus
+  const [focusedInput, setFocusedInput] = useState(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof signUpSchema>>({
+  } = useForm({
     resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      passwordConfirmation: "",
-    },
   });
 
-  const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
+  const onSubmit = async (data) => {
     if (!isLoaded) return;
 
     setIsSubmitting(true);
     setAuthError(null);
 
     try {
-      await signUp.create({
+      const result = await signUp.create({
         emailAddress: data.email,
         password: data.password,
       });
 
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-      setVerifying(true);
-    } catch (error: any) {
-      console.error("Sign-up error:", error);
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/dashboard");
+      }
+    } catch (error) {
       setAuthError(
         error.errors?.[0]?.message ||
           "An error occurred during sign-up. Please try again."
@@ -72,256 +192,154 @@ export default function SignUpForm() {
     }
   };
 
-  const handleVerificationSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-    if (!isLoaded || !signUp) return;
-
-    setIsSubmitting(true);
-    setVerificationError(null);
-
-    try {
-      const result = await signUp.attemptEmailAddressVerification({
-        code: verificationCode,
-      });
-
-      if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
-      } else {
-        console.error("Verification incomplete:", result);
-        setVerificationError(
-          "Verification could not be completed. Please try again."
-        );
-      }
-    } catch (error: any) {
-      console.error("Verification error:", error);
-      setVerificationError(
-        error.errors?.[0]?.message ||
-          "An error occurred during verification. Please try again."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  if (verifying) {
-    return (
-      <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl">
-        <CardHeader className="flex flex-col gap-1 items-center pb-2">
-          <h1 className="text-2xl font-bold text-default-900">
-            Verify Your Email
-          </h1>
-          <p className="text-default-500 text-center">
-            We've sent a verification code to your email
-          </p>
-        </CardHeader>
-
-        <Divider />
-
-        <CardBody className="py-6">
-          {verificationError && (
-            <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 flex-shrink-0" />
-              <p>{verificationError}</p>
-            </div>
-          )}
-
-          <form onSubmit={handleVerificationSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label
-                htmlFor="verificationCode"
-                className="text-sm font-medium text-default-900"
-              >
-                Verification Code
-              </label>
-              <Input
-                id="verificationCode"
-                type="text"
-                placeholder="Enter the 6-digit code"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
-                className="w-full"
-                autoFocus
-              />
-            </div>
-
-            <Button
-              type="submit"
-              color="primary"
-              className="w-full"
-              isLoading={isSubmitting}
-            >
-              {isSubmitting ? "Verifying..." : "Verify Email"}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-default-500">
-              Didn't receive a code?{" "}
-              <button
-                onClick={async () => {
-                  if (signUp) {
-                    await signUp.prepareEmailAddressVerification({
-                      strategy: "email_code",
-                    });
-                  }
-                }}
-                className="text-primary hover:underline font-medium"
-              >
-                Resend code
-              </button>
-            </p>
-          </div>
-        </CardBody>
-      </Card>
-    );
-  }
-
   return (
-    <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl">
-      <CardHeader className="flex flex-col gap-1 items-center pb-2">
-        <h1 className="text-2xl font-bold text-default-900">
-          Create Your Account
-        </h1>
-        <p className="text-default-500 text-center">
-          Sign up to start managing your images securely
-        </p>
-      </CardHeader>
+    <div style={styles.formContainer}>
+      <div style={styles.headerContainer}>
+        <h1 style={styles.heading}>Create Your Account</h1>
+        <p style={styles.subHeading}>Sign up to start managing your images securely</p>
+      </div>
 
-      <Divider />
+      {authError && (
+        <div style={styles.errorAlert}>
+          {authError}
+        </div>
+      )}
 
-      <CardBody className="py-6">
-        {authError && (
-          <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0" />
-            <p>{authError}</p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium text-default-900"
-            >
-              Email
-            </label>
-            <Input
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div style={styles.formGroup}>
+          <label htmlFor="email" style={styles.label}>
+            Email
+          </label>
+          <div style={styles.inputWrapper}>
+            <div style={styles.iconLeft}>
+              <Mail size={18} />
+            </div>
+            <input
               id="email"
               type="email"
               placeholder="your.email@example.com"
-              startContent={<Mail className="h-4 w-4 text-default-500" />}
-              isInvalid={!!errors.email}
-              errorMessage={errors.email?.message}
+              style={{
+                ...styles.input,
+                ...(focusedInput === 'email' ? styles.inputFocus : {})
+              }}
               {...register("email")}
-              className="w-full"
+              onFocus={() => setFocusedInput('email')}
+              onBlur={() => setFocusedInput(null)}
             />
           </div>
+          {errors.email && (
+            <p style={styles.errorMessage}>{errors.email.message}</p>
+          )}
+        </div>
 
-          <div className="space-y-2">
-            <label
-              htmlFor="password"
-              className="text-sm font-medium text-default-900"
-            >
-              Password
-            </label>
-            <Input
+        <div style={styles.formGroup}>
+          <label htmlFor="password" style={styles.label}>
+            Password
+          </label>
+          <div style={styles.inputWrapper}>
+            <div style={styles.iconLeft}>
+              <Lock size={18} />
+            </div>
+            <input
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              startContent={<Lock className="h-4 w-4 text-default-500" />}
-              endContent={
-                <Button
-                  isIconOnly
-                  variant="light"
-                  size="sm"
-                  onClick={() => setShowPassword(!showPassword)}
-                  type="button"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-default-500" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-default-500" />
-                  )}
-                </Button>
-              }
-              isInvalid={!!errors.password}
-              errorMessage={errors.password?.message}
+              style={{
+                ...styles.input,
+                ...(focusedInput === 'password' ? styles.inputFocus : {})
+              }}
               {...register("password")}
-              className="w-full"
+              onFocus={() => setFocusedInput('password')}
+              onBlur={() => setFocusedInput(null)}
             />
-          </div>
-
-          <div className="space-y-2">
-            <label
-              htmlFor="passwordConfirmation"
-              className="text-sm font-medium text-default-900"
+            <button
+              type="button"
+              style={styles.toggleButton}
+              onClick={() => setShowPassword(!showPassword)}
             >
-              Confirm Password
-            </label>
-            <Input
-              id="passwordConfirmation"
+              {showPassword ? (
+                <EyeOff size={18} />
+              ) : (
+                <Eye size={18} />
+              )}
+            </button>
+          </div>
+          {errors.password && (
+            <p style={styles.errorMessage}>{errors.password.message}</p>
+          )}
+        </div>
+
+        <div style={styles.formGroup}>
+          <label htmlFor="confirmPassword" style={styles.label}>
+            Confirm Password
+          </label>
+          <div style={styles.inputWrapper}>
+            <div style={styles.iconLeft}>
+              <Lock size={18} />
+            </div>
+            <input
+              id="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               placeholder="••••••••"
-              startContent={<Lock className="h-4 w-4 text-default-500" />}
-              endContent={
-                <Button
-                  isIconOnly
-                  variant="light"
-                  size="sm"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  type="button"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4 text-default-500" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-default-500" />
-                  )}
-                </Button>
-              }
-              isInvalid={!!errors.passwordConfirmation}
-              errorMessage={errors.passwordConfirmation?.message}
+              style={{
+                ...styles.input,
+                ...(focusedInput === 'confirmPassword' ? styles.inputFocus : {})
+              }}
               {...register("passwordConfirmation")}
-              className="w-full"
+              onFocus={() => setFocusedInput('confirmPassword')}
+              onBlur={() => setFocusedInput(null)}
             />
+            <button
+              type="button"
+              style={styles.toggleButton}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? (
+                <EyeOff size={18} />
+              ) : (
+                <Eye size={18} />
+              )}
+            </button>
           </div>
+          {errors.passwordConfirmation && (
+            <p style={styles.errorMessage}>{errors.passwordConfirmation.message}</p>
+          )}
+        </div>
 
-          <div className="space-y-4">
-            <div className="flex items-start gap-2">
-              <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
-              <p className="text-sm text-default-600">
-                By signing up, you agree to our Terms of Service and Privacy
-                Policy
-              </p>
-            </div>
-          </div>
+        <div style={styles.termsContainer}>
+          <span style={styles.termsIcon}>
+            <CheckCircle size={20} />
+          </span>
+          <p style={styles.termsText}>
+            By signing up, you agree to our Terms of Service and Privacy Policy
+          </p>
+        </div>
 
-          <Button
-            type="submit"
-            color="primary"
-            className="w-full"
-            isLoading={isSubmitting}
-          >
-            {isSubmitting ? "Creating account..." : "Create Account"}
-          </Button>
-        </form>
-      </CardBody>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          style={{
+            ...styles.submitButton,
+            ...(isSubmitting ? styles.submitButtonDisabled : {})
+          }}
+          onMouseOver={(e) => !isSubmitting && Object.assign(e.target.style, styles.submitButtonHover)}
+          onMouseOut={(e) => !isSubmitting && Object.assign(e.target.style, { backgroundColor: styles.submitButton.backgroundColor })}
+        >
+          {isSubmitting ? "Creating account..." : "Create Account"}
+        </button>
 
-      <Divider />
-
-      <CardFooter className="flex justify-center py-4">
-        <p className="text-sm text-default-600">
+        <div style={styles.footer}>
           Already have an account?{" "}
-          <Link
-            href="/sign-in"
-            className="text-primary hover:underline font-medium"
+          <Link 
+            href="/sign-in" 
+            style={styles.link}
+            onMouseOver={(e) => Object.assign(e.target.style, styles.linkHover)}
+            onMouseOut={(e) => Object.assign(e.target.style, { color: styles.link.color, textDecoration: 'none' })}
           >
             Sign in
           </Link>
-        </p>
-      </CardFooter>
-    </Card>
+        </div>
+      </form>
+    </div>
   );
 }

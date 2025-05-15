@@ -1,0 +1,96 @@
+/* Base wrapper */
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f0f4f8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Main content area */
+  .dashboard-main {
+    flex: 1;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+  }
+  
+  /* Headers */
+  h1, h2 {
+    color: #1e3a8a; /* dark blue */
+    margin-bottom: 16px;
+  }
+  
+  /* Upload section */
+  .upload-box {
+    border: 2px dashed #3b82f6;
+    padding: 30px;
+    text-align: center;
+    margin: 20px 0;
+    background-color: #f0faff;
+    color: #0c4a6e;
+    border-radius: 8px;
+  }
+  
+  /* Button-like tabs */
+  .tab-button {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+  }
+  .tab-button:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Profile/User section */
+  .user-box {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    background: white;
+    border: 1px solid #d1d5db;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  /* Footer */
+  .dashboard-footer {
+    background-color: #f8fafc;
+    border-top: 1px solid #d1d5db;
+    padding: 24px 20px;
+  }
+  .footer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1e3a8a;
+  }
+  .footer-icon {
+    color: #3b82f6;
+  }
+  .footer-copy {
+    font-size: 14px;
+    color: #64748b;
+  }
+  

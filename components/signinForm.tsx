@@ -13,6 +13,7 @@ import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Mail, Lock, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { signInSchema } from "@/schemas/signinSchema";
+import "./signinForm.css";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -49,11 +50,9 @@ export default function SignInForm() {
         await setActive({ session: result.createdSessionId });
         router.push("/dashboard");
       } else {
-        console.error("Sign-in incomplete:", result);
         setAuthError("Sign-in could not be completed. Please try again.");
       }
     } catch (error: any) {
-      console.error("Sign-in error:", error);
       setAuthError(
         error.errors?.[0]?.message ||
           "An error occurred during sign-in. Please try again."
@@ -64,58 +63,43 @@ export default function SignInForm() {
   };
 
   return (
-    <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl">
-      <CardHeader className="flex flex-col gap-1 items-center pb-2">
-        <h1 className="text-2xl font-bold text-default-900">Welcome Back</h1>
-        <p className="text-default-500 text-center">
-          Sign in to access your secure cloud storage
-        </p>
-      </CardHeader>
+    <div className="card">
+      <div className="card-header">
+        <h1>Welcome Back</h1>
+        <p>Sign in to access your secure cloud storage</p>
+      </div>
 
       <Divider />
 
-      <CardBody className="py-6">
+      <div className="card-body">
         {authError && (
-          <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+          <div className="auth-error">
+            <AlertCircle className="icon" />
             <p>{authError}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <label
-              htmlFor="identifier"
-              className="text-sm font-medium text-default-900"
-            >
-              Email
-            </label>
+        <form onSubmit={handleSubmit(onSubmit)} className="form">
+          <div className="form-group">
+            <label htmlFor="identifier">Email</label>
             <Input
               id="identifier"
               type="email"
               placeholder="your.email@example.com"
-              startContent={<Mail className="h-4 w-4 text-default-500" />}
+              startContent={<Mail className="icon" />}
               isInvalid={!!errors.identifier}
               errorMessage={errors.identifier?.message}
               {...register("identifier")}
-              className="w-full"
             />
           </div>
 
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <label
-                htmlFor="password"
-                className="text-sm font-medium text-default-900"
-              >
-                Password
-              </label>
-            </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              startContent={<Lock className="h-4 w-4 text-default-500" />}
+              startContent={<Lock className="icon" />}
               endContent={
                 <Button
                   isIconOnly
@@ -124,44 +108,31 @@ export default function SignInForm() {
                   onClick={() => setShowPassword(!showPassword)}
                   type="button"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-default-500" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-default-500" />
-                  )}
+                  {showPassword ? <EyeOff className="icon" /> : <Eye className="icon" />}
                 </Button>
               }
               isInvalid={!!errors.password}
               errorMessage={errors.password?.message}
               {...register("password")}
-              className="w-full"
             />
           </div>
 
-          <Button
-            type="submit"
-            color="primary"
-            className="w-full"
-            isLoading={isSubmitting}
-          >
+          <Button type="submit" color="primary" isLoading={isSubmitting}>
             {isSubmitting ? "Signing in..." : "Sign In"}
           </Button>
         </form>
-      </CardBody>
+      </div>
 
       <Divider />
 
-      <CardFooter className="flex justify-center py-4">
-        <p className="text-sm text-default-600">
+      <div className="card-footer">
+        <p>
           Don't have an account?{" "}
-          <Link
-            href="/sign-up"
-            className="text-primary hover:underline font-medium"
-          >
+          <Link href="/sign-up" className="signup-link">
             Sign up
           </Link>
         </p>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

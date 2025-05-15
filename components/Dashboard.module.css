@@ -1,0 +1,146 @@
+/* Base styles */
+.dashboardContainer {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
+  
+  .header {
+    margin-bottom: 32px;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: #222;
+  }
+  
+  .highlight {
+    color: #4f46e5;
+  }
+  
+  .subtitle {
+    font-size: 1.125rem;
+    color: #666;
+    margin-top: 8px;
+  }
+  
+  /* Tabs styles */
+  .tabsContainer {
+    width: 100%;
+  }
+  
+  .tabButtons {
+    display: flex;
+    position: relative;
+    gap: 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 4px;
+  }
+  
+  .tabButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    padding: 12px 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    position: relative;
+  }
+  
+  .tabButton:hover {
+    color: #4f46e5;
+  }
+  
+  .activeTab {
+    color: #4f46e5;
+  }
+  
+  .tabIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .tabIndicator {
+    position: absolute;
+    bottom: -1px;
+    height: 2px;
+    background-color: #4f46e5;
+    transition: all 0.3s ease;
+  }
+  
+  .tabIndicator[data-active-tab="files"] {
+    left: 0;
+    width: 100px;
+  }
+  
+  .tabIndicator[data-active-tab="profile"] {
+    left: 124px;
+    width: 90px;
+  }
+  
+  .tabContent {
+    width: 100%;
+  }
+  
+  /* Files grid layout */
+  .filesGrid {
+    display: grid;
+    gap: 24px;
+  }
+  
+  @media (min-width: 1024px) {
+    .filesGrid {
+      grid-template-columns: 1fr 2fr;
+    }
+  }
+  
+  /* Card styles */
+  .card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .cardHeader h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .cardIcon {
+    color: #4f46e5;
+  }
+  
+  .cardBody {
+    padding: 20px;
+  }
+  
+  /* Profile section */
+  .profileSection {
+    padding: 20px 0;
+  }
