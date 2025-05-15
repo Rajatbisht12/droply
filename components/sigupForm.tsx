@@ -6,12 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { z } from "zod";
+// import { z } from "zod";
 import { Mail, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
 import { signUpSchema } from "@/schemas/signUpschema";
+import { CSSProperties } from "react";
 
 // Add separate CSS styles instead of Tailwind classes
-const styles = {
+const styles: Record<string, CSSProperties> = {
   formContainer: {
     maxWidth: "450px",
     margin: "0 auto",
@@ -21,7 +22,7 @@ const styles = {
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
   },
   headerContainer: {
-    textAlign: "center",
+    textAlign: "center" as const, // Properly typed as TextAlign
     marginBottom: "1.5rem"
   },
   heading: {
@@ -132,18 +133,18 @@ const styles = {
   },
   footer: {
     marginTop: "1.5rem",
-    textAlign: "center",
+    textAlign: "center" as const,
     fontSize: "0.875rem",
     color: "#4B5563"
   },
   link: {
     fontWeight: "500",
     color: "#2563EB",
-    textDecoration: "none"
+    textDecoration: "none" as const
   },
   linkHover: {
     color: "#1D4ED8",
-    textDecoration: "underline"
+    textDecoration: "underline" as const
   }
 };
 
@@ -151,12 +152,12 @@ export default function SignUpForm() {
   const router = useRouter();
   const { signUp, isLoaded, setActive } = useSignUp();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [authError, setAuthError] = useState(null);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   // State for input focus
-  const [focusedInput, setFocusedInput] = useState(null);
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
 
   const {
     register,
@@ -166,7 +167,7 @@ export default function SignUpForm() {
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: Record<string, any>) => {
     if (!isLoaded) return;
 
     setIsSubmitting(true);
@@ -182,7 +183,7 @@ export default function SignUpForm() {
         await setActive({ session: result.createdSessionId });
         router.push("/dashboard");
       }
-    } catch (error) {
+    } catch (error: any) {
       setAuthError(
         error.errors?.[0]?.message ||
           "An error occurred during sign-up. Please try again."
@@ -228,7 +229,7 @@ export default function SignUpForm() {
             />
           </div>
           {errors.email && (
-            <p style={styles.errorMessage}>{errors.email.message}</p>
+            <p style={styles.errorMessage}>{(errors.email as any).message}</p>
           )}
         </div>
 
@@ -265,7 +266,7 @@ export default function SignUpForm() {
             </button>
           </div>
           {errors.password && (
-            <p style={styles.errorMessage}>{errors.password.message}</p>
+            <p style={styles.errorMessage}>{(errors.password as any).message}</p>
           )}
         </div>
 
@@ -302,7 +303,7 @@ export default function SignUpForm() {
             </button>
           </div>
           {errors.passwordConfirmation && (
-            <p style={styles.errorMessage}>{errors.passwordConfirmation.message}</p>
+            <p style={styles.errorMessage}>{(errors.passwordConfirmation as any).message}</p>
           )}
         </div>
 
@@ -322,8 +323,22 @@ export default function SignUpForm() {
             ...styles.submitButton,
             ...(isSubmitting ? styles.submitButtonDisabled : {})
           }}
-          onMouseOver={(e) => !isSubmitting && Object.assign(e.target.style, styles.submitButtonHover)}
-          onMouseOut={(e) => !isSubmitting && Object.assign(e.target.style, { backgroundColor: styles.submitButton.backgroundColor })}
+          onMouseOver={(e) => {
+            if (!isSubmitting) {
+              // Apply hover styles as a complete style object
+              Object.assign(e.currentTarget.style, {
+                backgroundColor: styles.submitButtonHover.backgroundColor || "#1D4ED8"
+              });
+            }
+          }}
+          onMouseOut={(e) => {
+            if (!isSubmitting) {
+              // Reset to original style
+              Object.assign(e.currentTarget.style, {
+                backgroundColor: styles.submitButton.backgroundColor || "#2563EB"
+              });
+            }
+          }}
         >
           {isSubmitting ? "Creating account..." : "Create Account"}
         </button>
@@ -333,8 +348,20 @@ export default function SignUpForm() {
           <Link 
             href="/sign-in" 
             style={styles.link}
-            onMouseOver={(e) => Object.assign(e.target.style, styles.linkHover)}
-            onMouseOut={(e) => Object.assign(e.target.style, { color: styles.link.color, textDecoration: 'none' })}
+            onMouseOver={(e) => {
+              // Apply hover styles as a complete style object
+              Object.assign(e.currentTarget.style, {
+                color: styles.linkHover.color || "#1D4ED8",
+                textDecoration: styles.linkHover.textDecoration || "underline"
+              });
+            }}
+            onMouseOut={(e) => {
+              // Reset to original style
+              Object.assign(e.currentTarget.style, {
+                color: styles.link.color || "#2563EB",
+                textDecoration: styles.link.textDecoration || "none"
+              });
+            }}
           >
             Sign in
           </Link>

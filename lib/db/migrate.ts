@@ -20,7 +20,7 @@ async function  runMigration() {
         await migrate(db, {migrationsFolder : "./drizzle"});
         console.log("All Migrations are succesfull");
     } catch (error) {
-        console.log("All migrations are unsuccessfull");
+        console.log("All migrations are unsuccessfull", error);
         process.exit(1);
     }
 }

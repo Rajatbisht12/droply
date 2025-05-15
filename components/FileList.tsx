@@ -76,7 +76,7 @@ export default function FileList({
   // Fetch files when userId, refreshTrigger, or currentFolder changes
   useEffect(() => {
     fetchFiles();
-  }, [userId, refreshTrigger, currentFolder]);
+  }, [userId, refreshTrigger, currentFolder, fetchFiles]);
 
   // Filter files based on active tab
   const filteredFiles = useMemo(() => {
