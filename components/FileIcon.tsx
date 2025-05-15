@@ -28,7 +28,7 @@ export default function FileIcon({ file }: FileIconProps) {
               },
             ]}
             loading="lazy"
-            lqip={{ active: true }}
+            lqip={{ active: false }}
             alt={file.name}
             style={{ objectFit: "cover", height: "100%", width: "100%" }}
           />
