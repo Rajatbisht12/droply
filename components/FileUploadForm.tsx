@@ -318,7 +318,7 @@ export default function FileUploadForm({
       </div>
 
       {/* Create Folder Modal */}
-      <Modal
+      {/* <Modal
         isOpen={folderModalOpen}
         onOpenChange={setFolderModalOpen}
         backdrop="blur"
@@ -367,7 +367,61 @@ export default function FileUploadForm({
             </Button>
           </ModalFooter>
         </ModalContent>
-      </Modal>
+      </Modal> */}
+
+      {/* Create Folder Modal */}
+<Modal
+  isOpen={folderModalOpen}
+  onOpenChange={setFolderModalOpen}
+  backdrop="blur"
+  placement="center" // This is the key prop for centering
+  classNames={{
+    backdrop: styles.modalOverlay,
+    wrapper: styles.modalWrapper,
+    base: "max-w-[420px]",
+  }}
+>
+  <ModalContent>
+    {(onClose) => (
+      <>
+        <ModalHeader className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <FolderPlus className={styles.fileIconSmall} />
+            <span>New Folder</span>
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-default-500">
+              Enter a name for your folder:
+            </p>
+            <Input
+              autoFocus
+              label="Folder Name"
+              placeholder="My Images"
+              value={folderName}
+              onChange={(e) => setFolderName(e.target.value)}
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="default" variant="light" onPress={onClose}>
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            onPress={handleCreateFolder}
+            isLoading={creatingFolder}
+            isDisabled={!folderName.trim()}
+            endContent={!creatingFolder && <ArrowRight size={18} />}
+          >
+            Create
+          </Button>
+        </ModalFooter>
+      </>
+    )}
+  </ModalContent>
+</Modal>
     </div>
   );
 }

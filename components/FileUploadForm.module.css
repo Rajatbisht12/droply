@@ -1,4 +1,16 @@
 /* FileUploadForm.module.css */
+.modalOverlay {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.modalWrapper {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+}
 .container {
     display: flex;
     flex-direction: column;
@@ -182,3 +194,5 @@
     max-width: 400px;
     z-index: 1001;
   }
+
+  
